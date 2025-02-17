@@ -1,3 +1,4 @@
+import 'package:biteupcontent/pages/others/account_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomSliverAppBar extends StatelessWidget {
@@ -107,7 +108,7 @@ class CustomSliverAppBar extends StatelessWidget {
         title: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           height: isScrolled ? kToolbarHeight : 0,
-          color: Colors.pink[400],
+          // color: Colors.pink[400],
           child: isScrolled
               ? Padding(
             padding: const EdgeInsets.only(left: 48),
@@ -136,9 +137,14 @@ class CustomSliverAppBar extends StatelessWidget {
               : const SizedBox(),
         ),
       ),
-      leading: Icon(
-        Icons.person_outline,
-        color: Colors.white,
+      leading: InkWell(
+        onTap: ()=>{
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountPage()))
+        },
+        child: Icon(
+          Icons.person_outline,
+          color: Colors.white,
+        ),
       ),
       actions: const [
         Padding(
