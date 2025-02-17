@@ -1,0 +1,2 @@
+F:/biteupcontent/android/app/.cxx/Debug/4e1181c3/x86/CMakeFiles/edit_cache.dir
+F:/biteupcontent/android/app/.cxx/Debug/4e1181c3/x86/CMakeFiles/rebuild_cache.dir
