@@ -12,6 +12,18 @@ class HungerBoxPage extends StatefulWidget {
 }
 
 class _HungerBoxPageState extends State<HungerBoxPage> {
+  // Selection states for dropdowns
+  String? selectedRoti;
+  String? selectedBhaji;
+  String? selectedRice;
+  String? selectedDessert;
+
+  // Menu options
+  final List<String> rotiOptions = ['Plain Roti', 'Butter Roti', 'Tandoori Roti', 'Rumali Roti'];
+  final List<String> bhajiOptions = ['Paneer Butter Masala', 'Dal Fry', 'Mix Veg', 'Aloo Matar'];
+  final List<String> riceOptions = ['Steamed Rice', 'Jeera Rice', 'Veg Pulao', 'Biryani'];
+  final List<String> dessertOptions = ['Gulab Jamun', 'Rasgulla', 'Ice Cream', 'Kheer'];
+
   final Map<String, int> quantities = {
     'Roti': 1,
     'Bhaji': 1,
@@ -37,7 +49,7 @@ class _HungerBoxPageState extends State<HungerBoxPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final plateSize = screenWidth * 0.90;
     final appBarHeight = kToolbarHeight + 20 + MediaQuery.of(context).padding.top;
-    final bottomBarHeight = 56.0; // Standard bottom navigation bar height
+    final bottomBarHeight = 56.0;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -104,10 +116,30 @@ class _HungerBoxPageState extends State<HungerBoxPage> {
                                   ),
                                 ),
                                 SizedBox(height: screenWidth * 0.04),
-                                _buildSelectionField('Select Roti Type'),
-                                _buildSelectionField('Select Bhaji'),
-                                _buildSelectionField('Select Rice'),
-                                _buildSelectionField('Select Desert'),
+                                _buildSelectionField(
+                                  'Select Roti Type',
+                                  rotiOptions,
+                                  selectedRoti,
+                                      (value) => setState(() => selectedRoti = value),
+                                ),
+                                _buildSelectionField(
+                                  'Select Bhaji',
+                                  bhajiOptions,
+                                  selectedBhaji,
+                                      (value) => setState(() => selectedBhaji = value),
+                                ),
+                                _buildSelectionField(
+                                  'Select Rice',
+                                  riceOptions,
+                                  selectedRice,
+                                      (value) => setState(() => selectedRice = value),
+                                ),
+                                _buildSelectionField(
+                                  'Select Dessert',
+                                  dessertOptions,
+                                  selectedDessert,
+                                      (value) => setState(() => selectedDessert = value),
+                                ),
                               ],
                             ),
                           ),
@@ -180,8 +212,6 @@ class _HungerBoxPageState extends State<HungerBoxPage> {
                         _buildCustomMenuItem('Bhaji', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCsNQJxG5zy8ScNn5KbnnmgzPB_Stz3QGRg&s', quantities['Bhaji']!, prices['Bhaji']!),
                         _buildCustomMenuItem('Rice', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCsNQJxG5zy8ScNn5KbnnmgzPB_Stz3QGRg&s', quantities['Rice']!, prices['Rice']!),
 
-                        // SizedBox(height: screenWidth * 0.06),
-
                         // Order Button Row
                         Row(
                           children: [
@@ -228,7 +258,6 @@ class _HungerBoxPageState extends State<HungerBoxPage> {
                             ),
                           ],
                         ),
-                        // SizedBox(height: screenWidth * 0.04),
                       ],
                     ),
                   ),
@@ -249,11 +278,9 @@ class _HungerBoxPageState extends State<HungerBoxPage> {
     );
   }
 
-// Your existing _buildSelectionField and _buildCustomMenuItem methods remain the same
-  Widget _buildSelectionField(String text) {
+  Widget _buildSelectionField(String text, List<String> options, String? selectedValue, Function(String?) onChanged) {
     return Container(
-      // width: double.infinity,
-      width: 100,
+      width: double.infinity,
       height: MediaQuery.of(context).size.width * 0.11,
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -264,18 +291,32 @@ class _HungerBoxPageState extends State<HungerBoxPage> {
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.pink[400],
-              fontSize: MediaQuery.of(context).size.width * 0.035,
-              fontWeight: FontWeight.w400,
-            ),
+      child: DropdownButton<String>(
+        value: selectedValue,
+        hint: Text(
+          text,
+          style: TextStyle(
+            color: Colors.pink[400],
+            fontSize: MediaQuery.of(context).size.width * 0.035,
+            fontWeight: FontWeight.w400,
           ),
-        ],
+        ),
+        isExpanded: true,
+        icon: Icon(Icons.arrow_drop_down, color: Colors.pink[400]),
+        underline: Container(), // Remove default underline
+        onChanged: onChanged,
+        items: options.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.035,
+                color: Colors.black87,
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -370,8 +411,3 @@ class _HungerBoxPageState extends State<HungerBoxPage> {
     );
   }
 }
-
-
-
-
-
