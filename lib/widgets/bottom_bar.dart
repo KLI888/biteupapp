@@ -1,3 +1,4 @@
+import 'package:biteupcontent/pages/others/thalis_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -27,10 +28,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
             color: Colors.pink[400],
             size: 28,
           ),
-          Icon(
+          InkWell(
+            onTap: ()=>{
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>ThaliListingPage()))
+            },
+            child: Icon(
             Icons.restaurant_menu,
             color: Colors.grey[400],
             size: 28,
+          ),
           ),
           Icon(
             Icons.shopping_cart_outlined,

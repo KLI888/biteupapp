@@ -2,6 +2,7 @@ import 'package:biteupcontent/pages/others/helpdesk_page.dart';
 import 'package:biteupcontent/pages/others/order_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:biteupcontent/pages/others/complete_profile.dart';
 
 import '../../widgets/bottom_bar.dart';
 
@@ -31,7 +32,12 @@ class AccountPage extends StatelessWidget {
                   MenuItem(
                     icon: Icons.person_outline,
                     title: 'Edit profile',
-                    onTap: () {},
+                    onTap: () {     Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DeliveryAddressScreen(),
+                    ),
+                  );     },
                   ),
                   MenuItem(
                     icon: Icons.monetization_on_outlined,

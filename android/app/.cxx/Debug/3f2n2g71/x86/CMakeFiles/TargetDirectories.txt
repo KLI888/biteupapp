@@ -1,0 +1,2 @@
+C:/Users/Omkar Jadhav/Documents/TestBiteup/biteupcontent/android/app/.cxx/Debug/3f2n2g71/x86/CMakeFiles/edit_cache.dir
+C:/Users/Omkar Jadhav/Documents/TestBiteup/biteupcontent/android/app/.cxx/Debug/3f2n2g71/x86/CMakeFiles/rebuild_cache.dir

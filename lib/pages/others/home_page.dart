@@ -217,4 +217,4 @@ class BreakfastItem extends StatelessWidget {
   }
 }
 
-// Updated _buildBottomNavBar to match the image
+
