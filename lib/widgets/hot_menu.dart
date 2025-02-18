@@ -1,3 +1,4 @@
+import 'package:biteupcontent/pages/others/dishView_page.dart';
 import 'package:flutter/material.dart';
 
 class HotMenuSection extends StatelessWidget {
@@ -29,10 +30,15 @@ class HotMenuSection extends StatelessWidget {
               {'name': 'Raita', 'price': '₹68', 'discount': '30%'},
             ];
 
-            return buildMenuItem(
-              items[index]['name']!,
-              items[index]['price']!,
-              items[index]['discount']!,
+            return InkWell(
+              onTap: ()=>{
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>HungerBoxPage()))
+              },
+              child: buildMenuItem(
+                items[index]['name']!,
+                items[index]['price']!,
+                items[index]['discount']!,
+              ),
             );
           },
         );

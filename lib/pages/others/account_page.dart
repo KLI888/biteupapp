@@ -1,3 +1,5 @@
+import 'package:biteupcontent/pages/others/helpdesk_page.dart';
+import 'package:biteupcontent/pages/others/order_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -46,7 +48,9 @@ class AccountPage extends StatelessWidget {
                   MenuItem(
                     icon: Icons.history,
                     title: 'Order History',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderHistoryPage()));
+                    },
                   ),
                   MenuItem(
                     icon: Icons.book_outlined,
@@ -60,10 +64,13 @@ class AccountPage extends StatelessWidget {
                     title: 'About',
                     onTap: () {},
                   ),
+                  
                   MenuItem(
                     icon: Icons.question_answer_outlined,
                     title: 'Frequently asked questions',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>HelpDeskPage()));
+                    },
                   ),
                   MenuItem(
                     icon: Icons.feedback_outlined,
