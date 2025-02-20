@@ -1,4 +1,5 @@
 import 'package:biteupcontent/pages/others/account_page.dart';
+import 'package:biteupcontent/pages/others/wallet_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomSliverAppBar extends StatelessWidget {
@@ -146,12 +147,20 @@ class CustomSliverAppBar extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-      actions: const [
+      actions: [
         Padding(
           padding: EdgeInsets.only(right: 16),
-          child: Icon(
-            Icons.account_balance_wallet_outlined,
-            color: Colors.white,
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WalletScreen()),
+              );
+            },
+            child: Icon(
+              Icons.account_balance_wallet_outlined,
+              color: Colors.white,
+            ),
           ),
         ),
       ],

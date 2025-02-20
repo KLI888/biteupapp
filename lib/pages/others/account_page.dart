@@ -55,7 +55,7 @@ class AccountPage extends StatelessWidget {
                     icon: Icons.history,
                     title: 'Order History',
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderHistoryPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderHistoryScreen()));
                     },
                   ),
                   MenuItem(

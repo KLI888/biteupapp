@@ -1,393 +1,208 @@
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-// Model classes
-class FoodOrder {
-  final String name;
-  final String description;
-  final double rating;
-  final String imageUrl;
-  final double price;
-  final String orderDate;
-  final String orderStatus;
-
-  FoodOrder({
-    required this.name,
-    required this.description,
-    required this.rating,
-    required this.imageUrl,
-    required this.price,
-    required this.orderDate,
-    required this.orderStatus,
-  });
-
-  factory FoodOrder.fromJson(Map<String, dynamic> json) {
-    return FoodOrder(
-      name: json['name'],
-      description: json['description'],
-      rating: json['rating'].toDouble(),
-      imageUrl: json['imageUrl'],
-      price: json['price'].toDouble(),
-      orderDate: json['orderDate'],
-      orderStatus: json['orderStatus'],
-    );
-  }
-}
-
-// Dummy Data
-final List<Map<String, dynamic>> dummyOrdersJson = [
-  {
-    'name': 'Premium Thali',
-    'description': 'Customers Choice!',
-    'rating': 4.5,
-    'imageUrl': 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&webp=true&resize=375,341',
-    'price': 299.0,
-    'orderDate': '2025-02-17',
-    'orderStatus': 'Delivered'
-  },
-  {
-    'name': 'Base Thali',
-    'description': 'Don\'t miss at all!',
-    'rating': 4.0,
-    'imageUrl': 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&webp=true&resize=375,341',
-    'price': 199.0,
-    'orderDate': '2025-02-16',
-    'orderStatus': 'In Progress'
-  },
-  {
-    'name': 'Medium Thali',
-    'description': 'Worth it!',
-    'rating': 4.0,
-    'imageUrl': 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&webp=true&resize=375,341',
-    'price': 249.0,
-    'orderDate': '2025-02-15',
-    'orderStatus': 'Delivered'
-  },
-  {
-    'name': 'Special Veg Thali',
-    'description': 'Pure vegetarian delight!',
-    'rating': 4.8,
-    'imageUrl': 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&webp=true&resize=375,341',
-    'price': 279.0,
-    'orderDate': '2025-02-14',
-    'orderStatus': 'Delivered'
-  },
-  {
-    'name': 'Festive Thali',
-    'description': 'Special festival menu!',
-    'rating': 4.7,
-    'imageUrl': 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&webp=true&resize=375,341',
-    'price': 399.0,
-    'orderDate': '2025-02-13',
-    'orderStatus': 'Cancelled'
-  }
-];
-
-class OrderHistoryPage extends StatefulWidget {
-  const OrderHistoryPage({Key? key}) : super(key: key);
-
-  @override
-  State<OrderHistoryPage> createState() => _OrderHistoryPageState();
-}
-
-class _OrderHistoryPageState extends State<OrderHistoryPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  late List<FoodOrder> orders;
-  bool showCurrentOrders = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    // Convert dummy JSON data to FoodOrder objects
-    orders = dummyOrdersJson.map((json) => FoodOrder.fromJson(json)).toList();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  List<FoodOrder> get filteredOrders {
-    if (showCurrentOrders) {
-      return orders.where((order) => order.orderStatus == 'In Progress').toList();
-    } else {
-      return orders.where((order) => order.orderStatus != 'In Progress').toList();
-    }
-  }
-
+class OrderHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Order History',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: Color(0xFFE91E63),
       ),
       body: Column(
         children: [
-          Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  tabs: const [
-                    Tab(text: 'Cart'),
-                    Tab(text: 'Orders'),
-                  ],
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: Colors.pink,
-                  indicatorWeight: 3,
+          _buildCalendar(),
+          Expanded(
+            child: _buildOrderList(),
+          ),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildCalendar() {
+  DateTime now = DateTime.now();
+  DateTime lastDay = DateTime(2024, 12, 31);
+
+  // Ensure focusedDay is not after lastDay
+  if (now.isAfter(lastDay)) {
+    now = lastDay; // Set focusedDay to lastDay if the current day is later
+  }
+
+  return Container(
+    margin: EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 5,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: TableCalendar(
+      firstDay: DateTime(2024, 1, 1),
+      lastDay: lastDay,
+      focusedDay: now, // Set the updated focusedDay
+      currentDay: now,
+      calendarFormat: CalendarFormat.month,
+      headerStyle: HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
+      ),
+      calendarStyle: CalendarStyle(
+        selectedDecoration: BoxDecoration(
+          color: Color(0xFFE91E63),
+          shape: BoxShape.circle,
+        ),
+        todayDecoration: BoxDecoration(
+          color: Color(0xFFE91E63).withOpacity(0.5),
+          shape: BoxShape.circle,
+        ),
+      ),
+      availableCalendarFormats: const {
+        CalendarFormat.month: 'Month',
+      },
+    ),
+  );
+}
+
+
+  Widget _buildOrderList() {
+    final items = [
+      {
+        'title': 'Premium Thali',
+        'date': 'Delivered on 18 Oct, 2024',
+        'image': 'assets/images/premium_thali.png'
+      },
+      {
+        'title': 'Base Thali',
+        'date': 'Delivered on 18 Sept, 2024',
+        'image': 'assets/images/base_thali.png'
+      },
+      {
+        'title': 'Medium Thali',
+        'date': 'Delivered on 18 Sept, 2024',
+        'image': 'assets/images/medium_thali.png'
+      },
+    ];
+
+    return ListView.builder(
+      padding: EdgeInsets.all(16),
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return _buildOrderItem(
+          items[index]['title']!,
+          'We are glad you liked this dish!',
+          4,
+          items[index]['date']!,
+          items[index]['image']!,
+        );
+      },
+    );
+  }
+
+  Widget _buildOrderItem(String title, String subtitle, int rating, String deliveryDate, String imagePath) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(16),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.asset(
+            imagePath,
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 4),
+            Text(subtitle),
+            SizedBox(height: 4),
+            Row(
+              children: List.generate(
+                5,
+                (index) => Icon(
+                  index < rating ? Icons.star : Icons.star_border,
+                  color: Color(0xFFE91E63),
+                  size: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              showCurrentOrders = true;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: showCurrentOrders ? Colors.pink[50] : Colors.grey[200],
-                            foregroundColor: showCurrentOrders ? Colors.pink : Colors.grey,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Current Order'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              showCurrentOrders = false;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: !showCurrentOrders ? Colors.pink : Colors.grey[200],
-                            foregroundColor: !showCurrentOrders ? Colors.white : Colors.grey,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Previous Orders'),
-                        ),
-                      ),
-                    ],
+              ),
+            ),
+            SizedBox(height: 4),
+            Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                SizedBox(width: 4),
+                Text(
+                  deliveryDate,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: filteredOrders.isEmpty
-                ? Center(
-              child: Text(
-                showCurrentOrders
-                    ? 'No current orders'
-                    : 'No previous orders',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 16,
-                ),
-              ),
-            )
-                : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: filteredOrders.length,
-              itemBuilder: (context, index) {
-                final order = filteredOrders[index];
-                return _buildOrderCard(order);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOrderCard(FoodOrder order) {
-    return Card(
-      elevation: 0,
-      color: Colors.grey[50],
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image with error handling and loading indicator
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
-                width: 80,
-                height: 80,
-                child: Image.network(
-                  order.imageUrl,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null,
-                        color: Colors.pink,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.restaurant,
-                        color: Colors.grey,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Order details with Expanded to prevent overflow
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    order.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    order.description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        '₹${order.price.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.pink,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(order.orderStatus).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          order.orderStatus,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _getStatusColor(order.orderStatus),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  // Wrap stars in SingleChildScrollView to prevent horizontal overflow
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...List.generate(5, (index) {
-                          return Icon(
-                            index < order.rating.floor()
-                                ? Icons.star
-                                : Icons.star_border,
-                            color: Colors.pink,
-                            size: 16,
-                          );
-                        }),
-                        if (order.rating % 1 != 0)
-                          const Icon(
-                            Icons.star_half,
-                            color: Colors.pink,
-                            size: 16,
-                          ),
-                        const SizedBox(width: 4),
-                        Text(
-                          order.rating.toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.pink,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Ordered on ${order.orderDate}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
+        trailing: Icon(Icons.chevron_right),
       ),
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'Delivered':
-        return Colors.green;
-      case 'In Progress':
-        return Colors.blue;
-      case 'Cancelled':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
+  Widget _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Cart',
+        ),
+      ],
+      selectedItemColor: Color(0xFFE91E63),
+    );
   }
 }

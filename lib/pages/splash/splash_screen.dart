@@ -137,7 +137,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 decoration: BoxDecoration(
                   color: Colors.black,
                   image: DecorationImage(
-                    image: const AssetImage('assets/splash/9.png'),
+                    image: const AssetImage('assets/images/9.png'),
                     fit: BoxFit.cover,
                     opacity: 0.7,
                     filterQuality: FilterQuality.high,
@@ -155,7 +155,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     height: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: const AssetImage('assets/splash/9.png'),
+                        image: const AssetImage('assets/images/9.png'),
                         fit: BoxFit.cover,
                         filterQuality: FilterQuality.high,
                       ),
