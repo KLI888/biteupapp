@@ -15,11 +15,16 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> 
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {  // Changed this line from SingleTickerProviderStateMixin
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 300),
     vsync: this,
   );
+
+  late final AnimationController _rotationController = AnimationController(
+    duration: const Duration(seconds: 10), // Very slow rotation (10 seconds per rotation)
+    vsync: this,
+  )..repeat(); // Make it repeat continuously
 
   late final Animation<double> _scaleAnimation = Tween<double>(
     begin: 1.0,
@@ -34,6 +39,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
   @override
   void dispose() {
     _controller.dispose();
+    _rotationController.dispose();
     super.dispose();
   }
 
@@ -137,7 +143,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                   ),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
@@ -152,20 +158,23 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                       ),
                     ),
                     child: SizedBox(
-                      width: 52,
-                      height: 52,
+                      width: 58,
+                      height: 58,
                       child: Center(
-                        child: Image.asset(
-                          'assets/images/thali.png',
-                          width: 48,
-                          height: 48,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              Icons.restaurant_menu_rounded,
-                              color: Colors.white,
-                              size: 32,
-                            );
-                          },
+                        child: RotationTransition(
+                          turns: _rotationController,
+                          child: Image.asset(
+                            'assets/images/thali.png',
+                            width: 58,
+                            height: 58,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(
+                                Icons.restaurant_menu_rounded,
+                                color: Colors.white,
+                                size: 58,
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
